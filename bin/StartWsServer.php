@@ -5,6 +5,12 @@ use OpenSwoole\WebSocket\Server;
 use OpenSwoole\Http\Request;
 use OpenSwoole\WebSocket\Frame;
 
+
+define('SERVER_DIR', dirname(__DIR__));
+
+
+
+
 class LogLevel
 {
     const EMERGENCY = 'emergency';
@@ -22,21 +28,51 @@ function logMsg($level, $message, array $context = array())
     echo '[' . date('Y-m-d H:i:s') . '][' . $level . '] ' . $message . "\n";
 }
 
-$ip = "127.0.0.1";
+$ip = "0.0.0.0";
 $port = 9032;
 
-$server = new Server($ip, $port);
+$server = new Server($ip, $port, OpenSwoole\Server::POOL_MODE);
+$server->set([ // Server
+    //  'reactor_num' => 1,
+      'worker_num' => 2, // event worker // handle the business logic of a server request
+    //  'task_worker_num' => 0, // taks worker // task workers which handle any server tasks which get passed to them
+
+    //   'dispatch_mode' => 2,
+     'enable_coroutine' => true,
+     'max_coroutine' => 3000,
+//    'send_yield' => true,
+'max_conn' => 600
+]);
 
 
-$server->on('WorkerStart', function ($serv) {
-    require_once 'src/onWorkerStart/table.php';
-    require_once 'src/onWorkerStart/loadApp.php';
-    require_once 'src/onWorkerStart/on/onOpen.php';
-    require_once 'src/onWorkerStart/on/onMessage.php';
-    require_once 'src/onWorkerStart/on/onClose.php';
+
+
+
+$server->on('WorkerStart', function (OpenSwoole\Server $server, int $workerId) {
+
+    global $argv;
+
+    if ($server->taskworker) {
+        $name = 'task worker';
+    } else {
+        $name = 'event worker';
+    }
+
+    if ($workerId >= $server->setting['worker_num']) {
+        logMsg(LogLevel::INFO, 'Start task worker ' . $workerId . ' ' . $name);
+        OpenSwoole\Util::setProcessName("php {$argv[0]} task worker");
+    } else {
+        logMsg(LogLevel::INFO, 'Start event worker ' . $workerId . ' ' . $name);
+        OpenSwoole\Util::setProcessName("php {$argv[0]} event worker");
+    }
+
+    require_once SERVER_DIR . '/src/onWorkerStart/loadApp.php';
+    require_once SERVER_DIR . '/src/onWorkerStart/on/onOpen.php';
+    require_once SERVER_DIR . '/src/onWorkerStart/on/onMessage.php';
+    require_once SERVER_DIR . '/src/onWorkerStart/on/onClose.php';
 });
 $server->on('Receive', function ($serv) {
-    logMsg(LogLevel::INFO, 'onReceive!XXXXXXXXXXXX');
+    logMsg(LogLevel::INFO, 'onReceive');
 });
 $server->on('BeforeReload', function ($serv) {
 });
@@ -56,90 +92,86 @@ $server->on('Message', function (Server $server, Frame $frame) {
 });
 
 $server->on('Close', function (Server $server, int $fd) {
-    onClose($server,$fd);
+    onClose($server, $fd);
 });
 
 $server->on('Disconnect', function (Server $server, int $fd) {
     logMsg(LogLevel::INFO, 'connection disconnect: ' . $fd);
 });
+$server->on('Task', function (OpenSwoole\Server $server, $task_id, $reactorId, $data) {
+    echo "Task Worker Process received data";
+    echo "#{$server->worker_id}\tonTask: [PID={$server->worker_pid}]: task_id=$task_id, data_len=" . strlen($data) . "." . PHP_EOL;
+
+    $server->finish($data);
+});
+
+
+require_once SERVER_DIR . '/src/Repo/Users.php';
+require_once SERVER_DIR . '/src/Repo/Uri.php';
+require_once SERVER_DIR . '/src/Repo/Memory.php';
 
 global $users;
 global $uri;
 global $memory;
 
-
-function createUsersTable()
-{
-    global $users;
-    // id = uri, dane = zserjalizowana lista userów
-    $table = new \OpenSwoole\Table(1024);
-    $table->column('users', \OpenSwoole\Table::TYPE_STRING, 1024 * 100);
-    $table->create();
-    $users = $table;
-}
+$memory = new \Bobo121278\WsServerOpenSwoole\Repo\Memory();
+$users = new Bobo121278\WsServerOpenSwoole\Repo\Users();
+$uri = new \Bobo121278\WsServerOpenSwoole\Repo\Uri();
 
 function getUsers(string $uri)
 {
+    /* @var $users Bobo121278\WsServerOpenSwoole\Repo\Users */
     global $users;
-    if ($users->exists($uri)) {
-        return json_decode($users->get($uri)['users'], true);
-    }
-    return [];
+    return $users->getUsersByUri($uri);
 }
 
-function setUser(string $uri, $fd)
+function setUser(string $uri, int $fd)
 {
+    /* @var $users Bobo121278\WsServerOpenSwoole\Repo\Users */
     global $users;
-    $usersList = getUsers($uri);
-    $usersList[$fd] = [];
-    $users->set($uri, ['users' => json_encode($usersList)]);
+    $users->addUser($uri, $fd);
 }
 
-function createUriTable()
-{
-    global $uri;
-    //id = fd, dane = uri
-    $table = new \OpenSwoole\Table(1024);
-    $table->column('uri', \OpenSwoole\Table::TYPE_STRING, 256);
-    $table->create();
-    $uri = $table;
-}
 
-function setUri(int $fd, string $requestUri)
+function setUri(int $fd, string $fdUri)
 {
+    /* @var $uri \Bobo121278\WsServerOpenSwoole\Repo\Uri() */
     global $uri;
-    $uri->set($fd, ['uri' => $requestUri]);
+    $uri->setUri($fd, $fdUri);
 }
 
 function getUri(int $fd)
 {
+    /* @var $uri \Bobo121278\WsServerOpenSwoole\Repo\Uri() */
     global $uri;
-    return $uri->get($fd)['uri'];
+    return $uri->getUri($fd);
 }
 
 function removeFromTable(int $fd)
 {
-    global $users;
+    /* @var $uri \Bobo121278\WsServerOpenSwoole\Repo\Uri() */
     global $uri;
-    $requestUri = getUri($fd);
-    $uri->del($fd);
-    $usersList = getUsers($requestUri);
-    unset($usersList[$fd]);
-    $users->set($requestUri, ['users' => json_encode($usersList)]);
+    $fdUri = $uri->getUri($fd);
+    $uri->removeUri($fd);
+    /* @var $users Bobo121278\WsServerOpenSwoole\Repo\Users */
+    global $users;
+    $users->removeUser($fdUri, $fd);
 }
-function createMemoryTable()
-{
-    global $memory;
-    //id = fd, dane = uri
-    $table = new \OpenSwoole\Table(1024);
-    $table->column('data', \OpenSwoole\Table::TYPE_STRING, 256);
-    $table->create();
-    $memory = $table;
-}
-createUsersTable();
-createUriTable();
-createMemoryTable();
 
+
+function memorySet($k, $v)
+{
+    /* @var $memory Bobo121278\WsServerOpenSwoole\Repo\Memory */
+    global $memory;
+    $memory->set($k, $v);
+}
+
+function memoryGet($k): string
+{
+    /* @var $memory Bobo121278\WsServerOpenSwoole\Repo\Memory */
+    global $memory;
+    return $memory->get($k);
+}
 
 
 $server->start();

@@ -5,22 +5,21 @@ namespace Bobo121278\WsServerOpenSwoole\app;
 use Bobo121278\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\WebSocket\Server;
 use OpenSwoole\WebSocket\Frame;
+use OpenSwoole\Http\Request;
 
 class AppClientServer implements AppInterface
 {
     /**
      * @var string
      */
-    private $uniqueName;
+    private string $uniqueName;
 
     public function __construct(string $uniqueName)
     {
         $this->uniqueName = $uniqueName;
     }
 
-    private $serverFd;
-
-    function onMessage(Server $server, Frame $frame, array $usersList)
+    function onMessage(Server $server, Frame $frame, array $users)
     {
         $msg = $this->decodeMsg($frame->data);
         if (empty($msg)) {
@@ -32,50 +31,45 @@ class AppClientServer implements AppInterface
         }
         $serverFd = $this->getServer();
         if ($serverFd == $frame->fd) {
-            $this->serverMsg($server, $frame, $usersList, $msg);
+            $this->serverMsg($server, $users, $msg);
         } else {
-            $this->clientMsg($server, $frame, $usersList, $msg);
+            $this->clientMsg($server, $frame, $msg);
         }
-
     }
 
     private function setServer($fd)
     {
         global $memory;
-        $memory->set($this->uniqueName, ['data' => (string)$fd]);
+        $memory->set($this->uniqueName, $fd);
     }
 
-    private function getServer()
+    private function getServer(): int
     {
         global $memory;
-        return $memory->get($this->uniqueName)['data'];
+        return (int)$memory->get($this->uniqueName);
     }
 
     private function removeServer()
     {
         global $memory;
-        return $memory->del($this->uniqueName);
+        $memory->del($this->uniqueName);
     }
 
-    private function clientMsg(Server $server, Frame $frame, array $usersList, array $msg)
+    private function clientMsg(Server $server, Frame $frame, array $msg)
     {
-
         $msgToServer = [
             'msg' => $msg['msg'],
             'to' => $frame->fd
         ];
         $server->push($this->getServer(), $this->encodeMsg($msgToServer));
-
     }
 
-    private function serverMsg(Server $server, Frame $frame, array $usersList, array $msg)
+    private function serverMsg(Server $server, array $users, array $msg)
     {
-        $this->serverFd = $frame->fd;
-
         if (
             array_key_exists('msg', $msg) &&
-            array_key_exists($msg['to'], $usersList) &&
-            array_key_exists('to', $msg)
+            array_key_exists('to', $msg) &&
+            array_key_exists($msg['to'], $users)
         ) {
             $server->push($msg['to'], $this->encodeMsg([
                 'msg' => $msg['msg']
@@ -113,9 +107,13 @@ class AppClientServer implements AppInterface
         return '';
     }
 
-    public function onOpen(): string
+    public function onOpen(Server $server, Request $request): string
     {
-        // TODO: Implement onOpen() method.
         return '';
+    }
+
+    public function getAppName(): string
+    {
+        return 'Client Server';
     }
 }

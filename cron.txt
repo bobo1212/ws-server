@@ -1,0 +1,8 @@
+https://openswoole.com/docs/common-questions/enable-tls-https
+https://github.com/swoole/swoole-src/issues/3952
+https://www.digitalocean.com/community/tutorials/how-to-use-apache-as-a-reverse-proxy-with-mod_proxy-on-ubuntu-16-04
+https://www.simplified.guide/apache/limit-bandwidth
+
+@reboot sleep 90 && php /media/grzegorz/DATA/projekty/php/wsServerOpenSwoole/bin/StartWsServer.php >> /media/grzegorz/DATA/projekty/php/wsServerOpenSwoole/var/log.txt 2>&1
+nohup php /media/grzegorz/DATA/projekty/php/wsServerOpenSwoole/bin/StartWsServer.php </dev/null >> /media/grzegorz/DATA/projekty/php/wsServerOpenSwoole/var/log.txt 2>&1 &
+nohup php /mnt/dysk-1/programy/wsServerOpenSwoole/bin/StartWsServer.php </dev/null >> /mnt/dysk-1/programy/wsServerOpenSwoole/var/log.txt 2>&1 &

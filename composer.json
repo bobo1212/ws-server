@@ -1,0 +1,25 @@
+{
+  "name": "bobo1212/ws-server",
+  "description": "Websocket server",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "bobo1212",
+      "email": "bobo1212@wp.pl"
+    }
+  ],
+  "require-dev": {
+    "openswoole/ide-helper": "~22.0.1"
+  },
+  "require": {
+    "php": ">=7.4",
+    "ext-json": "*",
+    "textalk/websocket": "^1.6",
+    "ext-sockets": "*",
+    "ext-posix": "*",
+    "ext-shmop": "*",
+    "ext-sysvshm": "*",
+    "bobo1212/shared-memory": "dev-develop"
+  }
+}

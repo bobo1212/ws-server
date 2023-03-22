@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table class="table">
+    <thead>
+    <tr>
+        <th>total incoming bytes</th>
+        <th>incoming bytes/s</th>
+        <th>total incoming msg</th>
+        <th>incoming msg/s</th>
+    </tr>
+    </thead>
+    <tbody id="table-info">
+    </tbody>
+</table>
+<table class="table">
+    <thead>
+    <tr>
+        <th>uri</th>
+        <th>ip</th>
+        <th>port</th>
+        <th>worker</th>
+        <th>reactor</th>
+        <th>websocket status</th>
+        <th>close errno</th>
+        <th>last recv time</th>
+        <th>last send time</th>
+        <th>send queued bytes</th>
+        <th>recv queued bytes</th>
+    </tr>
+    </thead>
+    <tbody id="table-clients">
+    </tbody>
+</table>
+</body>
+<script>
+    let socket = new WebSocket("ws://localhost:9032/admin");
+    //let socket = new WebSocket("ws://192.168.0.13:9032/admin");
+    //let socket = new WebSocket("ws://20.203.223.233/admin");
+    const refreshInterval = 1000;
+    function displayTableClientsQuery() {
+        socket.send('{"msg":"client"}');
+        socket.send('{"msg":"info"}');
+    }
+
+    const tableClients = document.getElementById('table-clients');
+    const tableInfo = document.getElementById('table-info');
+
+    function displayTableClients(msg) {
+
+        let out = '';
+        /*
+                close_errno
+                connect_time
+                last_dispatch_time
+                last_recv_time
+                last_send_time
+                last_time
+                reactor_id
+                recv_queued_bytes
+                remote_ip
+                remote_port
+                send_queued_bytes
+                server_fd
+                server_port
+                socket_fd
+                socket_type
+                websocket_status
+                worker_id
+        */
+
+
+        msg.client.map(function (c) {
+
+            //console.log(Number.parseInt(c.last_recv_time,10));
+            var last_recv_time = (new Date((c.last_recv_time * 1000))).toISOString();
+            var last_send_time = (new Date((c.last_send_time * 1000))).toISOString();
+
+            console.log(c.connection_info);
+            out += '<tr>' +
+                '<td>' + c.uri + '</td>' +
+                '<td>' + c.remote_ip + '</td>' +
+                '<td>' + c.remote_port + '</td>' +
+                '<td>' + c.worker_id + '</td>' +
+                '<td>' + c.reactor_id + '</td>' +
+                '<td>' + c.websocket_status + '</td>' +
+                '<td>' + c.close_errno + '</td>' +
+                '<td>' + last_recv_time + '</td>' +
+                '<td>' + last_send_time + '</td>' +
+                '<td>' + bytesFormat(c.recv_queued_bytes) + '</td>' +
+                '<td>' + bytesFormat(c.send_queued_bytes) + '</td>' +
+                '' +
+                '</tr>';
+        });
+        tableClients.innerHTML = out;
+    }
+
+    tmpTotalByte = 0;
+    tmpTotalMsg = 0;
+    function displayTableInfo(msg) {
+        if(msg.totalByte > tmpTotalByte){
+            byteSpeed = bytesFormat((msg.totalByte-tmpTotalByte)/(refreshInterval/1000));
+        }else{
+            byteSpeed = 0;
+        }
+        if(msg.totalMsg > tmpTotalMsg){
+            msgSpeed = ((msg.totalMsg-tmpTotalMsg)/(refreshInterval/1000));
+        }else{
+            msgSpeed = 0;
+        }
+
+        let out = '';
+        out += '<tr>' +
+            '<td>' + bytesFormat(msg.totalByte) + '</td>' +
+            '<td>' + byteSpeed +'/s</td>' +
+            '<td>' + msg.totalMsg + ' msg</td>' +
+            '<td>' + msgSpeed +' msg/s</td>' +
+            '</tr>';
+        tmpTotalByte = msg.totalByte;
+        tmpTotalMsg = msg.totalMsg;
+        tableInfo.innerHTML = out;
+    }
+
+    socket.onopen = function (e) {
+        console.log('OPEN!')
+        setInterval(displayTableClientsQuery, refreshInterval);
+    };
+
+    socket.onmessage = function (event) {
+        msg = JSON.parse(event.data);
+        if (msg.msg === 'client') {
+            displayTableClients(msg)
+        } else if (msg.msg === 'info') {
+            displayTableInfo(msg)
+        }
+    };
+
+    socket.onclose = function (event) {
+        if (event.wasClean) {
+            console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+        } else {
+            // e.g. server process killed or network down
+            // event.code is usually 1006 in this case
+            console.log('[close] Connection died');
+        }
+    };
+
+    socket.onerror = function (error) {
+        console.log(`[error]` + error);
+    };
+
+    function bytesFormat(bytes) {
+        if (bytes == 0) {
+            return "0 B";
+        }
+        var e = Math.floor(Math.log(bytes) / Math.log(1024));
+        return (bytes / Math.pow(1024, e)).toFixed(2) + ' ' + ' KMGTP'.charAt(e) + 'B';
+    }
+</script>
+</html>
