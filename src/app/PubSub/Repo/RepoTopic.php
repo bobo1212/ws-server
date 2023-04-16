@@ -102,4 +102,13 @@ class RepoTopic implements InterfaceTopic
         }
         return $topics[$topicName];
     }
+
+    public function unSubscribeAllTopics(int $fd)
+    {
+        foreach ($this->getTopics() as $topic => $info) {
+            if(array_key_exists($fd, $info)) {
+                $this->unSubscribeTopic($topic, $fd);
+            }
+        }
+    }
 }

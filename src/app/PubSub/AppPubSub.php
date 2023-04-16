@@ -3,9 +3,6 @@
 namespace Bobo121278\WsServerOpenSwoole\app\PubSub;
 
 use Bobo1212\SharedMemory\Memory as SharedMemory;
-use Bobo1212\SharedMemory\MemoryException;
-use Bobo1212\SharedMemory\MemoryExceptionNotFound;
-use Bobo121278\WsServerOpenSwoole\app\PubSub\Repo\RepoProducer;
 use Bobo121278\WsServerOpenSwoole\app\PubSub\Repo\RepoTopic;
 use Bobo121278\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\Http\Request;
@@ -14,23 +11,26 @@ use OpenSwoole\WebSocket\Server;
 
 class AppPubSub implements AppInterface
 {
-    const MEMORY_KEY_SERVER = 1000000000;
     const MEMORY_KEY = 1;
-    /**
-     * @var SharedMemory
-     */
-    private SharedMemory $sharedMemory;
+
     private RepoTopic $repoTopic;
-    private RepoProducer $repoProducer;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->sharedMemory = new SharedMemory(self::MEMORY_KEY);
-        $this->repoTopic = new RepoTopic($this->sharedMemory);
-        $this->repoProducer = new RepoProducer($this->sharedMemory);
+        $this->repoTopic = new RepoTopic(new SharedMemory(self::MEMORY_KEY));
+    }
+
+    public function signatureIsValid(array $msg): string
+    {
+        $siganature = $msg['signature'];
+        unset($msg['signature']);
+        $msgToSign = json_encode($msg);
+
+        //$auth_signature = hash_hmac('sha256', $string_to_sign, $auth_secret, false);
+        //hash_compare($hashed_value, $hashed_expected)
     }
 
     public function getAppName(): string
@@ -48,12 +48,8 @@ class AppPubSub implements AppInterface
         if (!array_key_exists('type', $msg)) {
             return;
         }
-        if ($msg['type'] == 'producer') {
-            $this->onMessageAddProducer($frame->fd);
-            return;
-        }
         if ($msg['type'] == 'msg') {
-            $this->onMessageProducerMsg($server, $msg);
+            $this->onMessageMsg($server, $msg);
             return;
         }
         if ($msg['type'] == 'subscribe') {
@@ -70,10 +66,10 @@ class AppPubSub implements AppInterface
         }
         if ($msg['type'] == 'delete_topic') {
             $this->onMessageDeleteTopic($frame->fd, $msg);
+            return;
         }
         if ($msg['type'] == 'admin') {
             $server->push($frame->fd, $this->encodeMsg([
-                'producers' => $this->repoProducer->getProducers(),
                 'topics' => $this->repoTopic->getTopics()
             ]));
         }
@@ -81,10 +77,7 @@ class AppPubSub implements AppInterface
 
     public function onClose(Server $server, int $fd)
     {
-        $serverFd = $this->repoProducer->getProducers();
-        if (array_key_exists($fd, $serverFd)) {
-            $this->repoProducer->removeProducer($fd);
-        }
+        $this->repoTopic->unSubscribeAllTopics($fd);
     }
 
     private function decodeMsg(string $msg): array
@@ -114,12 +107,7 @@ class AppPubSub implements AppInterface
         return '';
     }
 
-    private function onMessageAddProducer($fd)
-    {
-        $this->repoProducer->addProducer($fd);
-    }
-
-    private function onMessageProducerMsg(Server $server, array $msg)
+    private function onMessageMsg(Server $server, array $msg)
     {
         if (
             array_key_exists('msg', $msg) &&
@@ -127,9 +115,13 @@ class AppPubSub implements AppInterface
         ) {
             $users = $this->repoTopic->getTopicUsers($msg['topic']);
             foreach ($users as $fd => $userData) {
-                $server->push($fd, $this->encodeMsg([
-                    'msg' => $msg['msg']
-                ]));
+                if ($server->isEstablished($fd)) {
+                    $ret = $server->push($fd, $this->encodeMsg([
+                        'msg' => $msg['msg']
+                    ]));
+                } else {
+                    $this->repoTopic->unSubscribeAllTopics($fd);
+                }
             }
         }
     }
