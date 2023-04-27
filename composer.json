@@ -12,6 +12,11 @@
   "require-dev": {
     "openswoole/ide-helper": "~22.0.1"
   },
+  "autoload": {
+    "psr-4": {
+      "Bobo1212\\WsServerOpenSwoole\\": "src/"
+    }
+  },
   "require": {
     "php": ">=7.4",
     "ext-json": "*",
