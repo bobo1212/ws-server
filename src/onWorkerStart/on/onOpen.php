@@ -14,7 +14,6 @@ function onOpen(Server $server, Request $request)
     setUri($request->fd, $request->server['request_uri']);
 
     $users = getUsers($request->server['request_uri']);
-    logMsg(LogLevel::INFO, 'connection open: ' . $request->fd . ' ' . $request->server['request_uri'] . ' ' . count($users));
-
+    logMsg(LogLevel::INFO, 'connection open fd:' . $request->fd . ' uri:' . $request->server['request_uri'] . ' total:' . count($users));
     $appConfig[$request->server['request_uri']]->onOpen($server, $request);
 }

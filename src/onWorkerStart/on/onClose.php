@@ -10,5 +10,5 @@ function onClose(Server $server, int $fd)
     $appConfig[$requestUri]->onClose($server, $fd);
     removeFromTable($fd);
     $users = getUsers($requestUri);
-    logMsg(LogLevel::INFO, 'connection close: ' . $fd . ' ' . $requestUri . ' ' . count($users));
+    logMsg(LogLevel::INFO, 'connection close fd:' . $fd . ' uri:' . $requestUri . ' total:' . count($users));
 }
