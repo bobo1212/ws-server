@@ -9,8 +9,6 @@ use OpenSwoole\WebSocket\Frame;
 define('SERVER_DIR', dirname(__DIR__));
 
 
-
-
 class LogLevel
 {
     const EMERGENCY = 'emergency';
@@ -34,18 +32,15 @@ $port = 9032;
 $server = new Server($ip, $port, OpenSwoole\Server::POOL_MODE);
 $server->set([ // Server
     //  'reactor_num' => 1,
-      'worker_num' => 2, // event worker // handle the business logic of a server request
+    'worker_num' => 2, // event worker // handle the business logic of a server request
     //  'task_worker_num' => 0, // taks worker // task workers which handle any server tasks which get passed to them
 
     //   'dispatch_mode' => 2,
-     'enable_coroutine' => true,
-     'max_coroutine' => 3000,
+    'enable_coroutine' => true,
+    'max_coroutine' => 3000,
 //    'send_yield' => true,
-'max_conn' => 600
+    'max_conn' => 600
 ]);
-
-
-
 
 
 $server->on('WorkerStart', function (OpenSwoole\Server $server, int $workerId) {
@@ -86,7 +81,20 @@ $server->on("Start", function (Server $server) use ($ip, $port) {
 $server->on('Open', function (Server $server, Request $request) {
     onOpen($server, $request);
 });
+$server->on('Request', function (OpenSwoole\Http\Request $request, OpenSwoole\Http\Response $response) use ($server) {
 
+    $info = [];
+    $response->end('<h1>Hello World! Openswolle</h1>');
+//    foreach ($server->getClientList() as $client){
+//        if($request->fd == $client){
+//            continue;
+//        }
+//        $info[] =$client; /
+//        $server->push($client,'www');
+//    }
+//
+//    $response->end('<h1>Hello World! Openswolle</h1>'.json_encode($info));
+});
 $server->on('Message', function (Server $server, Frame $frame) {
     onMessage($server, $frame);
 });
@@ -101,7 +109,6 @@ $server->on('Disconnect', function (Server $server, int $fd) {
 $server->on('Task', function (OpenSwoole\Server $server, $task_id, $reactorId, $data) {
     echo "Task Worker Process received data";
     echo "#{$server->worker_id}\tonTask: [PID={$server->worker_pid}]: task_id=$task_id, data_len=" . strlen($data) . "." . PHP_EOL;
-
     $server->finish($data);
 });
 
