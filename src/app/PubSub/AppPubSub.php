@@ -1,10 +1,10 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\app\PubSub;
+namespace Bobo1212\WsServerOpenSwoole\app\PubSub;
 
 use Bobo1212\SharedMemory\Memory as SharedMemory;
-use Bobo121278\WsServerOpenSwoole\app\PubSub\Repo\RepoTopic;
-use Bobo121278\WsServerOpenSwoole\AppInterface;
+use Bobo1212\WsServerOpenSwoole\app\PubSub\Repo\RepoTopic;
+use Bobo1212\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\Http\Request;
 use OpenSwoole\WebSocket\Frame;
 use OpenSwoole\WebSocket\Server;

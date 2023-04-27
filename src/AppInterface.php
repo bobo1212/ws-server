@@ -1,6 +1,6 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole;
+namespace Bobo1212\WsServerOpenSwoole;
 
 use OpenSwoole\WebSocket\Server;
 use OpenSwoole\Http\Request;

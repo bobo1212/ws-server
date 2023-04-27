@@ -1,8 +1,8 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\app;
+namespace Bobo1212\WsServerOpenSwoole\app;
 
-use Bobo121278\WsServerOpenSwoole\AppInterface;
+use Bobo1212\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\Constant;
 use OpenSwoole\WebSocket\Server;
 use OpenSwoole\WebSocket\Frame;

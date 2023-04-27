@@ -12,8 +12,8 @@ require_once SERVER_DIR . '/src/app/PubSub/Repo/RepoProducer.php';
 
 global $appConfig;
 $appConfig = [
-    '/admin' => new  \Bobo121278\WsServerOpenSwoole\app\AppAdmin(),
-    '/toall' => new  \Bobo121278\WsServerOpenSwoole\app\AppToAll(),
-    '/ai' => new \Bobo121278\WsServerOpenSwoole\app\AppClientServer('unikalnaNazwa_jsdfh7234'),
-    '/topics' => new \Bobo121278\WsServerOpenSwoole\app\PubSub\AppPubSub(),
+    '/admin' => new  \Bobo1212\WsServerOpenSwoole\app\AppAdmin(),
+    '/toall' => new  \Bobo1212\WsServerOpenSwoole\app\AppToAll(),
+    '/ai' => new \Bobo1212\WsServerOpenSwoole\app\AppClientServer('unikalnaNazwa_jsdfh7234'),
+    '/topics' => new \Bobo1212\WsServerOpenSwoole\app\PubSub\AppPubSub(),
 ];

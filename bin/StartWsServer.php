@@ -121,20 +121,20 @@ global $users;
 global $uri;
 global $memory;
 
-$memory = new \Bobo121278\WsServerOpenSwoole\Repo\Memory();
-$users = new Bobo121278\WsServerOpenSwoole\Repo\Users();
-$uri = new \Bobo121278\WsServerOpenSwoole\Repo\Uri();
+$memory = new \Bobo1212\WsServerOpenSwoole\Repo\Memory();
+$users = new Bobo1212\WsServerOpenSwoole\Repo\Users();
+$uri = new \Bobo1212\WsServerOpenSwoole\Repo\Uri();
 
 function getUsers(string $uri)
 {
-    /* @var $users Bobo121278\WsServerOpenSwoole\Repo\Users */
+    /* @var $users Bobo1212\WsServerOpenSwoole\Repo\Users */
     global $users;
     return $users->getUsersByUri($uri);
 }
 
 function setUser(string $uri, int $fd)
 {
-    /* @var $users Bobo121278\WsServerOpenSwoole\Repo\Users */
+    /* @var $users Bobo1212\WsServerOpenSwoole\Repo\Users */
     global $users;
     $users->addUser($uri, $fd);
 }
@@ -142,25 +142,25 @@ function setUser(string $uri, int $fd)
 
 function setUri(int $fd, string $fdUri)
 {
-    /* @var $uri \Bobo121278\WsServerOpenSwoole\Repo\Uri() */
+    /* @var $uri \Bobo1212\WsServerOpenSwoole\Repo\Uri() */
     global $uri;
     $uri->setUri($fd, $fdUri);
 }
 
 function getUri(int $fd)
 {
-    /* @var $uri \Bobo121278\WsServerOpenSwoole\Repo\Uri() */
+    /* @var $uri \Bobo1212\WsServerOpenSwoole\Repo\Uri() */
     global $uri;
     return $uri->getUri($fd);
 }
 
 function removeFromTable(int $fd)
 {
-    /* @var $uri \Bobo121278\WsServerOpenSwoole\Repo\Uri() */
+    /* @var $uri \Bobo1212\WsServerOpenSwoole\Repo\Uri() */
     global $uri;
     $fdUri = $uri->getUri($fd);
     $uri->removeUri($fd);
-    /* @var $users Bobo121278\WsServerOpenSwoole\Repo\Users */
+    /* @var $users Bobo1212\WsServerOpenSwoole\Repo\Users */
     global $users;
     $users->removeUser($fdUri, $fd);
 }
@@ -168,14 +168,14 @@ function removeFromTable(int $fd)
 
 function memorySet($k, $v)
 {
-    /* @var $memory Bobo121278\WsServerOpenSwoole\Repo\Memory */
+    /* @var $memory Bobo1212\WsServerOpenSwoole\Repo\Memory */
     global $memory;
     $memory->set($k, $v);
 }
 
 function memoryGet($k): string
 {
-    /* @var $memory Bobo121278\WsServerOpenSwoole\Repo\Memory */
+    /* @var $memory Bobo1212\WsServerOpenSwoole\Repo\Memory */
     global $memory;
     return $memory->get($k);
 }

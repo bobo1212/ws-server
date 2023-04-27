@@ -1,6 +1,6 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\app\PubSub\Repo;
+namespace Bobo1212\WsServerOpenSwoole\app\PubSub\Repo;
 
 interface InterfaceProducer
 {

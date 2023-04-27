@@ -1,6 +1,6 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\Repo;
+namespace Bobo1212\WsServerOpenSwoole\Repo;
 
 class Uri
 {
