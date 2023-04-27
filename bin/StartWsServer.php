@@ -75,7 +75,7 @@ $server->on('AfterReload', function ($serv) {
 });
 
 $server->on("Start", function (Server $server) use ($ip, $port) {
-    logMsg(LogLevel::INFO, 'OpenSwoole WebSocket Server is started at ws://' . $ip . ':' . $port);
+    logMsg(LogLevel::INFO, 'WebSocket server is started at ws://' . $ip . ':' . $port);
 });
 
 $server->on('Open', function (Server $server, Request $request) {
