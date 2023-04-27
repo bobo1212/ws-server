@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c95443adecb244c80cae9153650d5348",
+    "content-hash": "e7decbcef6e10d50af9349dde938215c",
     "packages": [
         {
             "name": "bobo1212/shared-memory",
@@ -413,6 +413,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-sockets": "*",
         "ext-posix": "*",
