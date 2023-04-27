@@ -31,6 +31,7 @@ class AppPubSub implements AppInterface
 
         //$auth_signature = hash_hmac('sha256', $string_to_sign, $auth_secret, false);
         //hash_compare($hashed_value, $hashed_expected)
+        return '';
     }
 
     public function getAppName(): string
@@ -104,6 +105,12 @@ class AppPubSub implements AppInterface
 
     public function onOpen(Server $server, Request $request): string
     {
+        if (array_key_exists('authorization', $request->header)) {
+            var_dump($request->header['authorization']);
+        }
+        if (is_array($request->get) && array_key_exists('token', $request->get)) {
+            var_dump($request->get['token']);
+        }
         return '';
     }
 
