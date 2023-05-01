@@ -26,22 +26,14 @@ function logMsg($level, $message, array $context = array())
     echo '[' . date('Y-m-d H:i:s') . '][' . $level . '] ' . $message . "\n";
 }
 
-$ip = "0.0.0.0";
-$port = 9032;
 
+$config = include(SERVER_DIR . '/config/config.php');
+$ip = $config['ip'];
+$port = $config['port'];
 $server = new Server($ip, $port, OpenSwoole\Server::POOL_MODE);
-$server->set([ // Server
-    //  'reactor_num' => 1,
-    'worker_num' => 2, // event worker // handle the business logic of a server request
-    //  'task_worker_num' => 0, // taks worker // task workers which handle any server tasks which get passed to them
 
-    //   'dispatch_mode' => 2,
-    'enable_coroutine' => true,
-    'max_coroutine' => 3000,
-//    'send_yield' => true,
-    'max_conn' => 600
-]);
-
+$serverOptions = include(SERVER_DIR . '/config/serverOptions.php');
+$server->set($serverOptions);
 
 $server->on('WorkerStart', function (OpenSwoole\Server $server, int $workerId) {
 
