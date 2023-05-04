@@ -10,7 +10,7 @@ interface AppInterface
 {
 
     public function getAppName(): string;
-    public function onOpen(Server $server, Request $request): string;
+    public function onOpen(Server $server, Request $request);
     public function onMessage(Server $server, Frame $frame, array $users);
     public function onClose(Server $server, int $fd);
     /*

@@ -107,9 +107,8 @@ class AppClientServer implements AppInterface
         return '';
     }
 
-    public function onOpen(Server $server, Request $request): string
+    public function onOpen(Server $server, Request $request)
     {
-        return '';
     }
 
     public function getAppName(): string

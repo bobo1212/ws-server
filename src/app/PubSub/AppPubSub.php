@@ -23,17 +23,6 @@ class AppPubSub implements AppInterface
         $this->repoTopic = new RepoTopic(new SharedMemory(self::MEMORY_KEY));
     }
 
-    public function signatureIsValid(array $msg): string
-    {
-        $siganature = $msg['signature'];
-        unset($msg['signature']);
-        $msgToSign = json_encode($msg);
-
-        //$auth_signature = hash_hmac('sha256', $string_to_sign, $auth_secret, false);
-        //hash_compare($hashed_value, $hashed_expected)
-        return '';
-    }
-
     public function getAppName(): string
     {
         return 'Publish Subscribe';
@@ -83,7 +72,7 @@ class AppPubSub implements AppInterface
 
     private function decodeMsg(string $msg): array
     {
-        $msg = @json_decode($msg, true);
+        $msg = @json_decode($msg, true,2);
         if (is_array($msg)) {
             return $msg;
         }
@@ -103,15 +92,21 @@ class AppPubSub implements AppInterface
         return '';
     }
 
-    public function onOpen(Server $server, Request $request): string
+    public function onOpen(Server $server, Request $request)
     {
-        if (array_key_exists('authorization', $request->header)) {
-            var_dump($request->header['authorization']);
-        }
-        if (is_array($request->get) && array_key_exists('token', $request->get)) {
-            var_dump($request->get['token']);
-        }
-        return '';
+//        if (!array_key_exists('authorization', $request->header)) {
+//            logMsg(\LogLevel::INFO, 'Authorization header is missing ' . $request->server['remote_addr'] . $request->server['request_uri']);
+//            $server->disconnect($request->fd,Server::WEBSOCKET_CLOSE_NORMAL,'Authorization header is missing');
+//            return;
+//        }
+//        $authorizationHeader = trim($request->header['authorization']);
+//        $authorizationType = substr($authorizationHeader, 0, 7);
+//        $authorizationType = strtolower($authorizationType);
+//        if ('bearer ' != $authorizationType) {
+//            logMsg(\LogLevel::INFO, 'Authorization type not supported ' . $request->server['remote_addr'] . $request->server['request_uri']);
+//            $server->disconnect($request->fd,Server::WEBSOCKET_CLOSE_NORMAL,'Authorization type not supported');
+//        }
+//        $token = substr($authorizationHeader, 7);
     }
 
     private function onMessageMsg(Server $server, array $msg)

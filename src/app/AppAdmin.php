@@ -62,10 +62,9 @@ class AppAdmin implements AppInterface
 
     }
 
-    public function onOpen(Server $server, Request $request): string
+    public function onOpen(Server $server, Request $request)
     {
         // TODO: Implement onOpen() method.
-        return '';
     }
 
     private function decodeMsg(string $msg): array
