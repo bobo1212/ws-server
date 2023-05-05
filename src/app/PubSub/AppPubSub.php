@@ -4,6 +4,7 @@ namespace Bobo1212\WsServerOpenSwoole\app\PubSub;
 
 use Bobo1212\SharedMemory\Memory as SharedMemory;
 use Bobo1212\WsServerOpenSwoole\app\PubSub\Repo\RepoTopic;
+use Bobo1212\WsServerOpenSwoole\app\PubSub\Repo\RepoUser;
 use Bobo1212\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\Http\Request;
 use OpenSwoole\WebSocket\Frame;
@@ -11,16 +12,16 @@ use OpenSwoole\WebSocket\Server;
 
 class AppPubSub implements AppInterface
 {
-    const MEMORY_KEY = 1;
-
     private RepoTopic $repoTopic;
+    private RepoUser $repoUser;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->repoTopic = new RepoTopic(new SharedMemory(self::MEMORY_KEY));
+        $this->repoTopic = new RepoTopic(new SharedMemory(RepoTopic::MEMORY_KEY_TOPICS));
+        $this->repoUser = new RepoUser(new SharedMemory(RepoUser::MEMORY_KEY_USER));
     }
 
     public function getAppName(): string
@@ -58,9 +59,10 @@ class AppPubSub implements AppInterface
             $this->onMessageDeleteTopic($frame->fd, $msg);
             return;
         }
+
         if ($msg['type'] == 'admin') {
             $server->push($frame->fd, $this->encodeMsg([
-                'topics' => $this->repoTopic->getTopics()
+                'topics' => $this->repoTopic->getTopics(),
             ]));
         }
     }
@@ -68,6 +70,7 @@ class AppPubSub implements AppInterface
     public function onClose(Server $server, int $fd)
     {
         $this->repoTopic->unSubscribeAllTopics($fd);
+        $this->repoUser->removeUser($fd);
     }
 
     private function decodeMsg(string $msg): array
@@ -107,6 +110,7 @@ class AppPubSub implements AppInterface
 //            $server->disconnect($request->fd,Server::WEBSOCKET_CLOSE_NORMAL,'Authorization type not supported');
 //        }
 //        $token = substr($authorizationHeader, 7);
+        $this->repoUser->addUser($request->fd,[]);
     }
 
     private function onMessageMsg(Server $server, array $msg)
