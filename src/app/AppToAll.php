@@ -10,9 +10,11 @@ use OpenSwoole\Http\Request;
 
 class AppToAll implements AppInterface
 {
-    function onMessage(Server $server, Frame $frame, array $usersList)
+    function onMessage(Server $server, Frame $frame)
     {
-        foreach ($usersList as $fd => $user) {
+        $requestUri = getUri($frame->fd);
+        $users = getUsers($requestUri);
+        foreach ($users as $fd => $user) {
             if ($fd == $frame->fd) {
                 continue;
             }

@@ -29,7 +29,7 @@ class AppPubSub implements AppInterface
         return 'Publish Subscribe';
     }
 
-    function onMessage(Server $server, Frame $frame, array $users)
+    function onMessage(Server $server, Frame $frame)
     {
         $msg = $this->decodeMsg($frame->data);
 

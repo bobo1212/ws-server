@@ -9,7 +9,7 @@ use OpenSwoole\Http\Request;
 
 class AppAdmin implements AppInterface
 {
-    function onMessage(Server $server, Frame $frame, array $usersList)
+    function onMessage(Server $server, Frame $frame)
     {
         $msgData = $this->decodeMsg($frame->data);
         $msg = $msgData['msg'];

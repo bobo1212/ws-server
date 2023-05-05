@@ -11,7 +11,7 @@ interface AppInterface
 
     public function getAppName(): string;
     public function onOpen(Server $server, Request $request);
-    public function onMessage(Server $server, Frame $frame, array $users);
+    public function onMessage(Server $server, Frame $frame);
     public function onClose(Server $server, int $fd);
     /*
     OpenSwoole\WebSocket\Server->on('Start', fn)
