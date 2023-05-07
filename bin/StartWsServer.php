@@ -104,6 +104,9 @@ $server->on('Task', function (OpenSwoole\Server $server, $task_id, $reactorId, $
     $server->finish($data);
 });
 
+$server->on('BufferFull', function (Server $server, int $fd) {
+    logMsg(LogLevel::INFO, 'BufferFull: ' . $fd);
+});
 
 require_once SERVER_DIR . '/src/Repo/Users.php';
 require_once SERVER_DIR . '/src/Repo/Uri.php';
