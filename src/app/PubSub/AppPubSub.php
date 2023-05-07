@@ -75,7 +75,7 @@ class AppPubSub implements AppInterface
 
     private function decodeMsg(string $msg): array
     {
-        $msg = @json_decode($msg, true,2);
+        $msg = @json_decode($msg, true, 3);
         if (is_array($msg)) {
             return $msg;
         }
@@ -110,7 +110,7 @@ class AppPubSub implements AppInterface
 //            $server->disconnect($request->fd,Server::WEBSOCKET_CLOSE_NORMAL,'Authorization type not supported');
 //        }
 //        $token = substr($authorizationHeader, 7);
-        $this->repoUser->addUser($request->fd,[]);
+        $this->repoUser->addUser($request->fd, []);
     }
 
     private function onMessageMsg(Server $server, array $msg)
