@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const wsUri = "ws://localhost:9032/admin";
+    const wsUri = "ws://192.168.0.13:9032/admin";
     let socket = 0;
 
     function wcConnectInterval() {
