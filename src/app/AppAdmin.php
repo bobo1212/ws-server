@@ -27,7 +27,7 @@ class AppAdmin implements AppInterface
         }
         if ($msg == 'client') {
             $lientsInfo = [];
-            foreach ($server->getClientList(0, 10) as $fd) {
+            foreach ($server->getClientList(0, 100) as $fd) {
                 $clientInfo = $server->getClientInfo($fd);
                 $clientInfo['uri'] = getUri($fd);
                 $lientsInfo[] = $clientInfo;
