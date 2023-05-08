@@ -25,6 +25,7 @@
     "ext-posix": "*",
     "ext-shmop": "*",
     "ext-sysvshm": "*",
-    "bobo1212/shared-memory": "dev-develop"
+    "bobo1212/shared-memory": "dev-develop",
+    "ext-sysvsem": "*"
   }
 }
