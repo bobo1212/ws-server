@@ -1,4 +1,4 @@
 <?php
 return [
-    'url' => 'ws://localhost:9032/topics'
+    'url' => 'ws://192.168.0.13:9032/topics'
 ];
