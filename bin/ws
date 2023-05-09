@@ -86,8 +86,11 @@ $server->on('Open', function (Server $server, Request $request) {
 });
 $server->on('Request', function (OpenSwoole\Http\Request $request, OpenSwoole\Http\Response $response) use ($server) {
 
+    if(function_exists('onRequest')){
+        onRequest($request,$response);
+    }
     $info = [];
-    $response->end('<h1>Hello World! Openswolle</h1>');
+   // $response->end('<h1>Hello World! Openswolle</h1>');
 //    foreach ($server->getClientList() as $client){
 //        if($request->fd == $client){
 //            continue;
