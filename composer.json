@@ -28,7 +28,10 @@
     "bobo1212/shared-memory": "dev-develop",
     "ext-sysvsem": "*"
   },
+  "config": {
+    "bin-dir": "bin"
+  },
   "bin": [
-    "ws"
+    "bin/ws"
   ]
 }
