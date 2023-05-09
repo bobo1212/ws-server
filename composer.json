@@ -18,14 +18,6 @@
     }
   },
   "require": {
-    "php": ">=7.4",
-    "ext-json": "*",
-    "textalk/websocket": "^1.6",
-    "ext-sockets": "*",
-    "ext-posix": "*",
-    "ext-shmop": "*",
-    "ext-sysvshm": "*",
-    "bobo1212/shared-memory": "dev-develop",
-    "ext-sysvsem": "*"
+
   }
 }
