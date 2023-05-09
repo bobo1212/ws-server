@@ -10,7 +10,7 @@
     }
   ],
   "require-dev": {
-    "openswoole/ide-helper": "~22.0.1"
+
   },
   "autoload": {
     "psr-4": {
