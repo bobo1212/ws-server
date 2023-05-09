@@ -20,7 +20,7 @@ class AppToAll implements AppInterface
             }
             $ret = $server->push($fd, $frame->data);
             if ($ret === false) {
-                $server->close($fd);
+                $server->close($fd,true);
                 removeFromTable($fd);
             }
         }

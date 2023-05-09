@@ -27,5 +27,8 @@
     "ext-sysvshm": "*",
     "bobo1212/shared-memory": "dev-develop",
     "ext-sysvsem": "*"
-  }
+  },
+  "bin": [
+    "ws"
+  ]
 }
