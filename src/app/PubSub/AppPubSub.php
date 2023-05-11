@@ -97,6 +97,13 @@ class AppPubSub implements AppInterface
 
     public function onOpen(Server $server, Request $request)
     {
+        /*
+         *         header('WWW-Authenticate: Basic realm="Test Authentication System"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo "You must enter a valid login ID and password to access this resource\n";
+         * */
+        //    'Authorization: Basic ' . base64_encode($userName . ':' . $password)
+        //
 //        if (!array_key_exists('authorization', $request->header)) {
 //            logMsg(\LogLevel::INFO, 'Authorization header is missing ' . $request->server['remote_addr'] . $request->server['request_uri']);
 //            $server->disconnect($request->fd,Server::WEBSOCKET_CLOSE_NORMAL,'Authorization header is missing');
