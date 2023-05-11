@@ -86,6 +86,8 @@ $server->on('Open', function (Server $server, Request $request) {
 });
 $server->on('Request', function (OpenSwoole\Http\Request $request, OpenSwoole\Http\Response $response) use ($server) {
 
+    logMsg(LogLevel::INFO, 'Http request: ' . $request->getMethod() . ' '. $request->server['request_uri'] );
+
     if(function_exists('onRequest')){
         onRequest($request,$response);
     }
