@@ -82,17 +82,18 @@ $server->on("Start", function (Server $server) use ($ip, $port) {
 });
 
 $server->on('Open', function (Server $server, Request $request) {
-    onOpen($server, $request);
+    var_dump('open: ' . count($server->connections));
+    // onOpen($server, $request);
 });
 $server->on('Request', function (OpenSwoole\Http\Request $request, OpenSwoole\Http\Response $response) use ($server) {
 
-    logMsg(LogLevel::INFO, 'Http request: ' . $request->getMethod() . ' '. $request->server['request_uri'] );
+    logMsg(LogLevel::INFO, 'Http request: ' . $request->getMethod() . ' ' . $request->server['request_uri']);
 
-    if(function_exists('onRequest')){
-        onRequest($request,$response);
+    if (function_exists('onRequest')) {
+        onRequest($request, $response);
     }
     $info = [];
-   // $response->end('<h1>Hello World! Openswolle</h1>');
+    // $response->end('<h1>Hello World! Openswolle</h1>');
 //    foreach ($server->getClientList() as $client){
 //        if($request->fd == $client){
 //            continue;
@@ -104,11 +105,22 @@ $server->on('Request', function (OpenSwoole\Http\Request $request, OpenSwoole\Ht
 //    $response->end('<h1>Hello World! Openswolle</h1>'.json_encode($info));
 });
 $server->on('Message', function (Server $server, Frame $frame) {
-    onMessage($server, $frame);
+    foreach ($server->connections as $fd) {
+        if ($frame->fd != $fd) {
+            $server->push($fd, $frame->data);
+        }
+    }
+    $msg = json_decode($frame->data,true);
+    if(is_array($msg) && array_key_exists('date',$msg)) {
+        echo $msg['date'] . "\n";
+    }else{
+       // var_dump($msg);
+    }
 });
 
 $server->on('Close', function (Server $server, int $fd) {
-    onClose($server, $fd);
+    // onClose($server, $fd);
+    var_dump('close: ' . count($server->connections));
 });
 
 $server->on('Disconnect', function (Server $server, int $fd) {
