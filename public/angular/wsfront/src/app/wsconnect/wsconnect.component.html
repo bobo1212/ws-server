@@ -1,0 +1,6 @@
+<p>Status {{ connectionStatus }} {{wsErrorMsg}}</p>
+<input type="text" [(ngModel)]="wsUri">
+<input type="button" value="connect" (click)="onClickConnectToWs()"/>
+<input type="button" value="close" (click)="onClickCloseWs()"/>
+
+
