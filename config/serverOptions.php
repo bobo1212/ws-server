@@ -203,7 +203,7 @@ return [
 //    'input_buffer_size' =>1024,// 1 * 1024 * 1024,
 //    'buffer_output_size' => 32 * 1024 * 1024, // byte in unit
 //    'tcp_fastopen' => false,
-    'max_conn' => 1000,
+    'max_conn' => 1024,
 //    'tcp_defer_accept' => 5,
 //    'open_tcp_keepalive' => true,
 //    'open_tcp_nodelay' => false,
