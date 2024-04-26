@@ -23,6 +23,7 @@ if(!array_key_exists($argv[1], $topics)){
 }
 
 $server = new OpenSwoole\Websocket\Server("0.0.0.0", $topics[$argv[1]]);
+$server->set(['worker_num' =>1]);
 
 $server->on('open', function ($server, $req) {
 
