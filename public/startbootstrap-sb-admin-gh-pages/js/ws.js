@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const wsUri = "ws://localhost:9032/admin";
+    const wsUri = "ws://192.168.0.13:9032/admin";
     let socket = 0;
 
     function wcConnectInterval() {
@@ -240,12 +240,12 @@ $(document).ready(function () {
          "OpenSwoole\\Table":3,
          "OpenSwoole\\Connection\\Iterator":2,
          "OpenSwoole\\WebSocket\\Frame":1,
-         "Bobo121278\\WsServerOpenSwoole\\app\\AppClientServer":1,
-         "Bobo121278\\WsServerOpenSwoole\\Repo\\Users":1,
-         "Bobo121278\\WsServerOpenSwoole\\Repo\\Memory":1,
-         "Bobo121278\\WsServerOpenSwoole\\Repo\\Uri":1,
-         "Bobo121278\\WsServerOpenSwoole\\app\\AppAdmin":1,
-         "Bobo121278\\WsServerOpenSwoole\\app\\AppToAll":1,
+         "Bobo1212\\WsServerOpenSwoole\\app\\AppClientServer":1,
+         "Bobo1212\\WsServerOpenSwoole\\Repo\\Users":1,
+         "Bobo1212\\WsServerOpenSwoole\\Repo\\Memory":1,
+         "Bobo1212\\WsServerOpenSwoole\\Repo\\Uri":1,
+         "Bobo1212\\WsServerOpenSwoole\\app\\AppAdmin":1,
+         "Bobo1212\\WsServerOpenSwoole\\app\\AppToAll":1,
          "OpenSwoole\\Server\\Port":1,
          "OpenSwoole\\WebSocket\\Server":1
       }

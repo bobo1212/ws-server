@@ -22,6 +22,7 @@
 <table class="table">
     <thead>
     <tr>
+        <th>lp</th>
         <th>uri</th>
         <th>ip</th>
         <th>port</th>
@@ -31,8 +32,8 @@
         <th>close errno</th>
         <th>last recv time</th>
         <th>last send time</th>
-        <th>send queued bytes</th>
         <th>recv queued bytes</th>
+        <th>send queued bytes</th>
     </tr>
     </thead>
     <tbody id="table-clients">
@@ -40,13 +41,13 @@
 </table>
 </body>
 <script>
-    let socket = new WebSocket("ws://localhost:9032/admin");
-    //let socket = new WebSocket("ws://192.168.0.13:9032/admin");
+    //let socket = new WebSocket("ws://localhost:9032/admin");
+    let socket = new WebSocket("ws://192.168.0.13:9032/admin");
     //let socket = new WebSocket("ws://20.203.223.233/admin");
     const refreshInterval = 1000;
     function displayTableClientsQuery() {
         socket.send('{"msg":"client"}');
-        socket.send('{"msg":"info"}');
+       // socket.send('{"msg":"info"}');
     }
 
     const tableClients = document.getElementById('table-clients');
@@ -76,14 +77,15 @@
         */
 
 
-        msg.client.map(function (c) {
+        msg.client.map(function (c,k) {
 
-            //console.log(Number.parseInt(c.last_recv_time,10));
+
             var last_recv_time = (new Date((c.last_recv_time * 1000))).toISOString();
             var last_send_time = (new Date((c.last_send_time * 1000))).toISOString();
 
-            console.log(c.connection_info);
+            k++;
             out += '<tr>' +
+                '<td>' + k + '</td>' +
                 '<td>' + c.uri + '</td>' +
                 '<td>' + c.remote_ip + '</td>' +
                 '<td>' + c.remote_port + '</td>' +

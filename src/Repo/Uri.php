@@ -1,6 +1,6 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\Repo;
+namespace Bobo1212\WsServerOpenSwoole\Repo;
 
 class Uri
 {
@@ -23,7 +23,7 @@ class Uri
 
     function getUri(int $fd): string
     {
-        return $this->uri->get($fd)['uri'];
+        return $this->uri->get($fd,'uri');
     }
 
     function removeUri(int $fd): void

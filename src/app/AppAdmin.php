@@ -1,15 +1,15 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\app;
+namespace Bobo1212\WsServerOpenSwoole\app;
 
-use Bobo121278\WsServerOpenSwoole\AppInterface;
+use Bobo1212\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\WebSocket\Server;
 use OpenSwoole\WebSocket\Frame;
 use OpenSwoole\Http\Request;
 
 class AppAdmin implements AppInterface
 {
-    function onMessage(Server $server, Frame $frame, array $usersList)
+    function onMessage(Server $server, Frame $frame)
     {
         $msgData = $this->decodeMsg($frame->data);
         $msg = $msgData['msg'];
@@ -27,7 +27,7 @@ class AppAdmin implements AppInterface
         }
         if ($msg == 'client') {
             $lientsInfo = [];
-            foreach ($server->getClientList(0, 10) as $fd) {
+            foreach ($server->getClientList(0, 100) as $fd) {
                 $clientInfo = $server->getClientInfo($fd);
                 $clientInfo['uri'] = getUri($fd);
                 $lientsInfo[] = $clientInfo;
@@ -62,10 +62,9 @@ class AppAdmin implements AppInterface
 
     }
 
-    public function onOpen(Server $server, Request $request): string
+    public function onOpen(Server $server, Request $request)
     {
         // TODO: Implement onOpen() method.
-        return '';
     }
 
     private function decodeMsg(string $msg): array

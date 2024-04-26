@@ -12,6 +12,11 @@
   "require-dev": {
     "openswoole/ide-helper": "~22.0.1"
   },
+  "autoload": {
+    "psr-4": {
+      "Bobo1212\\WsServerOpenSwoole\\": "src/"
+    }
+  },
   "require": {
     "php": ">=7.4",
     "ext-json": "*",
@@ -20,6 +25,13 @@
     "ext-posix": "*",
     "ext-shmop": "*",
     "ext-sysvshm": "*",
-    "bobo1212/shared-memory": "dev-develop"
-  }
+    "bobo1212/shared-memory": "dev-develop",
+    "ext-sysvsem": "*"
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "bin": [
+    "bin/ws"
+  ]
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole\app;
+namespace Bobo1212\WsServerOpenSwoole\app;
 
-use Bobo121278\WsServerOpenSwoole\AppInterface;
+use Bobo1212\WsServerOpenSwoole\AppInterface;
 use OpenSwoole\Constant;
 use OpenSwoole\WebSocket\Server;
 use OpenSwoole\WebSocket\Frame;
@@ -10,15 +10,17 @@ use OpenSwoole\Http\Request;
 
 class AppToAll implements AppInterface
 {
-    function onMessage(Server $server, Frame $frame, array $usersList)
+    function onMessage(Server $server, Frame $frame)
     {
-        foreach ($usersList as $fd => $user) {
+        $requestUri = getUri($frame->fd);
+        $users = getUsers($requestUri);
+        foreach ($users as $fd => $user) {
             if ($fd == $frame->fd) {
                 continue;
             }
             $ret = $server->push($fd, $frame->data);
             if ($ret === false) {
-                $server->close($fd);
+                $server->close($fd,true);
                 removeFromTable($fd);
             }
         }
@@ -29,10 +31,9 @@ class AppToAll implements AppInterface
 
     }
 
-    public function onOpen(Server $server, Request $request): string
+    public function onOpen(Server $server, Request $request)
     {
         // TODO: Implement onOpen() method.
-        return '';
     }
 
     public function getAppName(): string

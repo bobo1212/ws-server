@@ -1,6 +1,6 @@
 <?php
 
-namespace Bobo121278\WsServerOpenSwoole;
+namespace Bobo1212\WsServerOpenSwoole;
 
 use OpenSwoole\WebSocket\Server;
 use OpenSwoole\Http\Request;
@@ -10,8 +10,8 @@ interface AppInterface
 {
 
     public function getAppName(): string;
-    public function onOpen(Server $server, Request $request): string;
-    public function onMessage(Server $server, Frame $frame, array $users);
+    public function onOpen(Server $server, Request $request);
+    public function onMessage(Server $server, Frame $frame);
     public function onClose(Server $server, int $fd);
     /*
     OpenSwoole\WebSocket\Server->on('Start', fn)
